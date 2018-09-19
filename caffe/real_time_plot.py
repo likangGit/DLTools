@@ -36,7 +36,7 @@ def init():
 def update(num):
     logfile_path = args.logfile_path
     if '@' in args.logfile_path:
-        localfile_path = str(os.getpid())+"_temp.log"
+        localfile_path = os.path.join(os.path.dirname(__file__), str(os.getpid())+"_temp.log")
         getLogFilefromRemote(localfile_path)
         logfile_path = localfile_path
     train_dic_list, test_dic_list = log_parser.parse_log(logfile_path)
@@ -84,12 +84,17 @@ parser.add_argument("-t","--type", type=int,choices=[0,], default=0,help="""char
 parser.add_argument("-pw","--password", type=str, default='123', help="The password of remote")
 args = parser.parse_args()
 def main():
-    print("start config")
+    print("开始配置")
     ani = animation.FuncAnimation(fig, update, interval=args.interval*1000, init_func=init,
                                 repeat=False)
-    print("start monitoring")
+    print("开始监测")
     plt.show()
-    print("monitor stop")
+    files = os.listdir(os.path.dirname(__file__))
+    print("开始删除临时文件")
+    for file in files:
+        if "_temp.log" in file:
+            os.remove(file) 
+    print("停止监测")
 
 if __name__ == "__main__":
     main()
